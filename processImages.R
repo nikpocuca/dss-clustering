@@ -15,11 +15,29 @@ for(name in dirs){
     inter_step <- readPNG(paste(paste(path,name,sep = "/"),ds_png,sep = "/"))
     hold_labels <- append(hold_labels,nmz)
     hold_names <- append(hold_names,ds_png)
-    hold_images <- cbind(hold_images,inter_step[,,2])
+    if (length(dim(inter_step)) == 3){ hold_images <- cbind(hold_images,inter_step[,,2])}
+    else {hold_images <- cbind(hold_images,inter_step)}}
   }
 }
 
 hold_images <- hold_images[,-(1:28)]
 hold_names <- hold_names[-length(hold_names)]
 hold_labels <- hold_labels[-length(hold_labels)]
+
+uniqLabels <- unique(hold_labels)
+uniqLabels <- match(hold_labels,uniqLabels)
+
+resizedImages <- array(hold_images,c(28,28,length(hold_labels)))
+
+for(i in 1:length(hold_labels)){
+	inter_matrix <- resizedImages[,,i]
+	inter_matrix <- inter_matrix*255
+  inter_matrix[inter_matrix != 0] <- inter_matrix[inter_matrix != 0] + 50
+  inter_matrix[inter_matrix == 0] <- inter_matrix[inter_matrix == 0] + rnorm(length(inter_matrix[inter_matrix == 0]))
+  resizedImages[,,i] <- inter_matrix
+}
+
+
+
+
 
